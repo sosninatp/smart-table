@@ -47,11 +47,7 @@ function render(action) {
     result = applySearching(result, state, action);
     result = applyFiltering(result, state, action);
     result = applySorting(result, state, action);
-
-    ////Мы видим, что передаём сюда state — это состояние полей формы. Но, как вы знаете, их значения по умолчанию строковые, и это не очень удобно для наших последующих расчётов.
     result = applyPagination(result, state, action);
-
-
     sampleTable.render(result)
 }
 
@@ -75,25 +71,16 @@ const applyPagination = initPagination(             ////??? не поняла.  
     }
 );
 
-
-
-
-//// инициализация сортировки
 const applySorting = initSorting([        // Нам нужно передать сюда массив элементов, которые вызывают сортировку, чтобы изменять их визуальное представление
     sampleTable.header.elements.sortByDate,
     sampleTable.header.elements.sortByTotal
 ]);
 
-////???
-////а при инициализации — передать имя поля search в функцию, чтобы знать, какое значение брать из фильтров для поиска по полям. При использовании поиск нужно применить перед фильтрацией.
-const applySearching = initSearching("search")    // передаём имя поля search?
-
+const applySearching = initSearching("search")
 
 const applyFiltering = initFiltering(sampleTable.filter.elements, {    // передаём элементы фильтра
-    searchBySeller: indexes.sellers                                    // для элемента с именем searchBySeller устанавливаем массив продавцов
+    searchBySeller: indexes.sellers                                    // для элемента с именем 
 });
-
-
 
 
 const appRoot = document.querySelector('#app');

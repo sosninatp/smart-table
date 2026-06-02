@@ -4,26 +4,16 @@ import { createComparison, defaultRules } from "../lib/compare.js";
 const compare = createComparison(defaultRules);
 
 export function initFiltering(elements, indexes) {
-  // console.log(indexes )
-  /*
-    searchBySeller: 
-    seller_1: "Alexey Petrov"
-    ...*/
-  // console.log(Object.keys(indexes) ) ////только 0: "searchBySeller". //// ???пока 1 поле фильтры??
-
-  Object.keys(indexes) // Получаем ключи из объекта. ////"searchBySeller"
+  Object.keys(indexes) 
     .forEach((elementName) => {
-      // Перебираем по именам    ////???именам полей фильтра?
-      ////? видать добавляем элемент в select чтобы выпадашка с именами была
+      // Перебираем по именам  
       elements[elementName].append(
         // в каждый элемент добавляем опции
         ...Object.values(indexes[elementName]) // формируем массив имён, значений опций
           .map((name) => {
-            // используйте name как значение и текстовое содержимое ////???
             const option = document.createElement("option");
             option.value = name;
             option.textContent = name;
-            // console.log(name) ////Ivan Petrov
             return option; // @todo: создать и вернуть тег опции
           }),
       );
@@ -31,14 +21,6 @@ export function initFiltering(elements, indexes) {
 
   return (data, state, action) => {
     // @todo: #4.2 — обработать очистку поля
-    /*Добавьте очистку полей фильтров. 
-проверьте наличие действия. 
-Если это кнопка с именем clear,   ////!!!
-тогда найдите input рядом с нашей кнопкой. 
-Для этого можете получить родительский элемент кнопки и в нём выполнить поиск. ////???
-Для найденного поля ввода сбросьте value 
-и сделайте то же самое для соответствующего поля в state. 
-Поле можно узнать через значение атрибута data-field кнопки.*/
     if (action && action.name === "clear") {
       // Ищем родительский контейнер
       const parent = action.closest(".filter-wrapper");
