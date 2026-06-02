@@ -8,6 +8,10 @@ import {processFormData} from "./lib/utils.js";
 
 import {initTable} from "./components/table.js";
 // @todo: подключение
+import {initPagination} from  "./components/pagination.js";
+import {initSorting} from  "./components/sorting.js";
+import {initFiltering} from  "./components/filtering.js";
+import {initSearching} from  "./components/searching.js";
 
 
 // Исходные данные используемые в render()
@@ -20,9 +24,15 @@ const {data, ...indexes} = initData(sourceData);
 function collectState() {
     const state = processFormData(new FormData(sampleTable.container));
 
-    return {
-        ...state
+    const rowsPerPage = parseInt(state.rowsPerPage);    // приведём количество страниц к числу
+    const page = parseInt(state.page ?? 1);                // номер страницы по умолчанию 1 и тоже число
+
+    return {                                            // расширьте существующий return вот так
+        ...state,
+        rowsPerPage,
+        page
     };
+
 }
 
 /**
@@ -34,6 +44,13 @@ function render(action) {
     let result = [...data]; // копируем для последующего изменения
     // @todo: использование
 
+    result = applySearching(result, state, action);
+    result = applyFiltering(result, state, action);
+    result = applySorting(result, state, action);
+
+    ////Мы видим, что передаём сюда state — это состояние полей формы. Но, как вы знаете, их значения по умолчанию строковые, и это не очень удобно для наших последующих расчётов.
+    result = applyPagination(result, state, action);
+
 
     sampleTable.render(result)
 }
@@ -41,11 +58,42 @@ function render(action) {
 const sampleTable = initTable({
     tableTemplate: 'table',
     rowTemplate: 'row',
-    before: [],
-    after: []
+    before: ['search', 'header', 'filter'],
+    after: ['pagination']
 }, render);
 
 // @todo: инициализация
+const applyPagination = initPagination(             ////??? не поняла.  ?sampleTable.pagination.elements
+    sampleTable.pagination.elements,             // передаём сюда элементы пагинации, найденные в шаблоне
+    (el, page, isCurrent) => {                    // и колбэк, чтобы заполнять кнопки страниц данными
+        const input = el.querySelector('input');
+        const label = el.querySelector('span');
+        input.value = page;
+        input.checked = isCurrent;
+        label.textContent = page;
+        return el;
+    }
+);
+
+
+
+
+//// инициализация сортировки
+const applySorting = initSorting([        // Нам нужно передать сюда массив элементов, которые вызывают сортировку, чтобы изменять их визуальное представление
+    sampleTable.header.elements.sortByDate,
+    sampleTable.header.elements.sortByTotal
+]);
+
+////???
+////а при инициализации — передать имя поля search в функцию, чтобы знать, какое значение брать из фильтров для поиска по полям. При использовании поиск нужно применить перед фильтрацией.
+const applySearching = initSearching("search")    // передаём имя поля search?
+
+
+const applyFiltering = initFiltering(sampleTable.filter.elements, {    // передаём элементы фильтра
+    searchBySeller: indexes.sellers                                    // для элемента с именем searchBySeller устанавливаем массив продавцов
+});
+
+
 
 
 const appRoot = document.querySelector('#app');
