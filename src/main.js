@@ -59,7 +59,7 @@ const sampleTable = initTable({
 }, render);
 
 // @todo: инициализация
-const applyPagination = initPagination(             ////??? не поняла.  ?sampleTable.pagination.elements
+const applyPagination = initPagination(             ////?sampleTable.pagination.elements
     sampleTable.pagination.elements,             // передаём сюда элементы пагинации, найденные в шаблоне
     (el, page, isCurrent) => {                    // и колбэк, чтобы заполнять кнопки страниц данными
         const input = el.querySelector('input');
